@@ -122,11 +122,9 @@ export default function HomePage() {
       <SubmitModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSuccess={() => {
+        onSuccess={(count) => {
           setIsModalOpen(false);
-          // Don't refetch, just alert the user.
-          // The recipe needs approval anyway.
-          alert("Recipe submitted for review. Thank you!");
+          alert(`${count} recipe(s) submitted for review. Thank you!`);
         }}
       />
     </>

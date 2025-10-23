@@ -9,7 +9,7 @@ import { X } from "lucide-react";
 interface SubmitModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (count: number) => void;
 }
 
 export default function SubmitModal({
@@ -27,48 +27,66 @@ export default function SubmitModal({
     setError(null);
     setLoading(true);
 
-    let recipeJson: Recipe[];
-    let recipeObject: Recipe;
-
     if (!author.trim()) {
       setError("Please enter your name or a nickname.");
       setLoading(false);
       return;
     }
 
+    let recipeJson: Recipe[];
     try {
       recipeJson = JSON.parse(jsonText);
-      if (!Array.isArray(recipeJson) || recipeJson.length !== 1) {
-        throw new Error("Expected an array with a single recipe object.");
+      if (!Array.isArray(recipeJson)) {
+        throw new Error("Input is not a JSON array.");
       }
-      recipeObject = recipeJson[0];
+      if (recipeJson.length === 0) {
+        throw new Error("The JSON array is empty.");
+      }
     } catch (e: any) {
-      setError(`Invalid JSON: ${e.message}`);
+      setError(`Invalid JSON: ${e.message}. Please paste the export directly.`);
       setLoading(false);
       return;
     }
 
-    // Basic validation
-    if (!recipeObject.title || !recipeObject.steps) {
-      setError('Recipe is missing "title" or "steps".');
+    // --- NEW LOGIC: Loop and prepare all recipes ---
+    const recipesToInsert = [];
+    let invalidRecipeCount = 0;
+
+    for (const recipeObject of recipeJson) {
+      // Basic validation for each recipe
+      if (!recipeObject.title || !recipeObject.steps) {
+        invalidRecipeCount++;
+        continue; // Skip this invalid recipe
+      }
+
+      // Calculate total cooking time for this recipe
+      const total_cooking_time = getTotalCookingTime(recipeObject);
+
+      // Add valid recipe to our insert array
+      recipesToInsert.push({
+        recipe_data: recipeObject,
+        title: recipeObject.title,
+        category: recipeObject.category || "lunch", // Default category
+        author: author.trim(),
+        total_cooking_time: total_cooking_time,
+        is_approved: false, // Always default to not approved
+      });
+    }
+    // --- End of new logic ---
+
+    if (recipesToInsert.length === 0) {
+      setError(
+        "No valid recipes found in the JSON. Check for title and steps.",
+      );
       setLoading(false);
       return;
     }
-
-    // NEW: Calculate total cooking time
-    const total_cooking_time = getTotalCookingTime(recipeObject);
 
     try {
-      const { data, error: insertError } = await supabase
+      // Insert all valid recipes in a single batch
+      const { error: insertError } = await supabase
         .from("recipes-web-preview")
-        .insert({
-          recipe_data: recipeObject,
-          title: recipeObject.title,
-          category: recipeObject.category || "lunch",
-          author: author.trim(),
-          total_cooking_time: total_cooking_time,
-          is_approved: false,
-        });
+        .insert(recipesToInsert);
 
       if (insertError) throw insertError;
 
@@ -76,7 +94,7 @@ export default function SubmitModal({
       setLoading(false);
       setJsonText("");
       setAuthor("");
-      onSuccess();
+      onSuccess(recipesToInsert.length); // Pass back the count
     } catch (e: any) {
       setError(`Submission failed: ${e.message}`);
       setLoading(false);
@@ -92,7 +110,7 @@ export default function SubmitModal({
     >
       <div
         className="relative bg-ctp-mantle w-full max-w-2xl p-6 rounded-xl shadow-2xl border border-ctp-surface0"
-        onClick={(e) => e.stopPropagation()} // Prevent closing on modal click
+        onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
@@ -102,11 +120,11 @@ export default function SubmitModal({
         </button>
 
         <h2 className="text-2xl font-bold text-ctp-text mb-4">
-          Submit Your Recipe
+          Submit Your Recipe(s)
         </h2>
         <p className="text-ctp-subtext0 mb-6">
-          Paste your n-recipe JSON export below. It will be submitted for
-          approval.
+          Paste your n-recipe JSON export below. All recipes in the array will
+          be submitted for approval.
         </p>
 
         <form onSubmit={handleSubmit}>
@@ -140,7 +158,7 @@ export default function SubmitModal({
               value={jsonText}
               onChange={(e) => setJsonText(e.target.value)}
               rows={10}
-              placeholder='[ { "title": "My Recipe", ... } ]'
+              placeholder='[ { "title": "Recipe 1", ... }, { "title": "Recipe 2", ... } ]'
               required
               className="w-full bg-ctp-surface0 border border-ctp-surface1 rounded-lg p-3 text-ctp-text font-mono text-sm focus:ring-ctp-green focus:border-ctp-green"
             />
