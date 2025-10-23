@@ -2,16 +2,16 @@ This is a simple [Next.js](https://nextjs.org/) Template.
 
 ## Getting Started
 
-First, run the development server:
+First, install deps:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm i
+```
+
+Then run the dev server:
+
+```bash
 pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
