@@ -1,0 +1,30 @@
+name: Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  checks:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install PNPM
+        run: npm install -g pnpm@9.6.0
+
+      - name: Install dependencies
+        run: pnpm install
+      - name: Check formatting
+        run: pnpm format
+      - name: Check linter
+        run: pnpm lint

@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+/* Font */
+@import "@fontsource/ibm-plex-mono/300.css"; /* Light */
+@import "@fontsource/ibm-plex-mono/400.css"; /* Regular */
+@import "@fontsource/ibm-plex-mono/500.css"; /* Medium */
+@import "@fontsource/ibm-plex-mono/600.css"; /* Semi-Bold */
+@import "@fontsource/ibm-plex-mono/700.css"; /* Bold */
+
+::selection {
+  background-color: #5f8a9f;
+  color: #171717;
+}
+
+::-moz-selection {
+  background-color: #5f8a9f;
+  color: #171717;
+}
