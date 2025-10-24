@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase-client";
 import { Recipe } from "@/types/recipe";
 import { getTotalCookingTime } from "@/lib/utils";
@@ -19,8 +19,40 @@ export default function SubmitModal({
 }: SubmitModalProps) {
   const [jsonText, setJsonText] = useState("");
   const [author, setAuthor] = useState("");
+  const [language, setLanguage] = useState("");
+  const [languages, setLanguages] = useState<
+    Array<{ code: string; name: string; nativeName: string }>
+  >([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Load ISO 639-1 language data
+    const loadLanguages = async () => {
+      try {
+        const ISO6391 = (await import("iso-639-1")).default;
+        const codes = ISO6391.getAllCodes();
+        const langList = codes.map((code) => ({
+          code,
+          name: ISO6391.getName(code),
+          nativeName: ISO6391.getNativeName(code),
+        }));
+        // Sort by English name
+        langList.sort((a, b) => a.name.localeCompare(b.name));
+        setLanguages(langList);
+      } catch (err) {
+        console.error("Failed to load languages:", err);
+        // Fallback to a small list if import fails
+        setLanguages([
+          { code: "en", name: "English", nativeName: "English" },
+          { code: "de", name: "German", nativeName: "Deutsch" },
+          { code: "es", name: "Spanish", nativeName: "Español" },
+          { code: "fr", name: "French", nativeName: "Français" },
+        ]);
+      }
+    };
+    loadLanguages();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,6 +61,12 @@ export default function SubmitModal({
 
     if (!author.trim()) {
       setError("Please enter your name or a nickname.");
+      setLoading(false);
+      return;
+    }
+
+    if (!language) {
+      setError("Please select a language.");
       setLoading(false);
       return;
     }
@@ -48,31 +86,27 @@ export default function SubmitModal({
       return;
     }
 
-    // --- NEW LOGIC: Loop and prepare all recipes ---
     const recipesToInsert = [];
     let invalidRecipeCount = 0;
 
     for (const recipeObject of recipeJson) {
-      // Basic validation for each recipe
       if (!recipeObject.title || !recipeObject.steps) {
         invalidRecipeCount++;
-        continue; // Skip this invalid recipe
+        continue;
       }
 
-      // Calculate total cooking time for this recipe
       const total_cooking_time = getTotalCookingTime(recipeObject);
 
-      // Add valid recipe to our insert array
       recipesToInsert.push({
         recipe_data: recipeObject,
         title: recipeObject.title,
-        category: recipeObject.category || "lunch", // Default category
+        category: recipeObject.category || "lunch",
         author: author.trim(),
+        language: language,
         total_cooking_time: total_cooking_time,
-        is_approved: false, // Always default to not approved
+        is_approved: false,
       });
     }
-    // --- End of new logic ---
 
     if (recipesToInsert.length === 0) {
       setError(
@@ -83,18 +117,17 @@ export default function SubmitModal({
     }
 
     try {
-      // Insert all valid recipes in a single batch
       const { error: insertError } = await supabase
         .from("recipes-web-preview")
         .insert(recipesToInsert);
 
       if (insertError) throw insertError;
 
-      // Success
       setLoading(false);
       setJsonText("");
       setAuthor("");
-      onSuccess(recipesToInsert.length); // Pass back the count
+      setLanguage("");
+      onSuccess(recipesToInsert.length);
     } catch (e: any) {
       setError(`Submission failed: ${e.message}`);
       setLoading(false);
@@ -124,7 +157,10 @@ export default function SubmitModal({
         </h2>
         <p className="text-ctp-subtext0 mb-6">
           Paste your n-recipe JSON export below. All recipes in the array will
-          be submitted for approval.
+          be submitted for approval. <br />
+          You can export your recipe as text in the app: <br />
+          Settings {"->"} Export {"->"} (select recipes) {"->"} Show more
+          options
         </p>
 
         <form onSubmit={handleSubmit}>
@@ -144,6 +180,29 @@ export default function SubmitModal({
               required
               className="w-full bg-ctp-surface0 border border-ctp-surface1 rounded-lg p-3 text-ctp-text focus:ring-ctp-green focus:border-ctp-green"
             />
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="language"
+              className="block text-sm font-medium text-ctp-subtext1 mb-1"
+            >
+              Recipe Language
+            </label>
+            <select
+              id="language"
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              required
+              className="w-full bg-ctp-surface0 border border-ctp-surface1 rounded-lg p-3 text-ctp-text focus:ring-ctp-green focus:border-ctp-green cursor-pointer"
+            >
+              <option value="">Select a language...</option>
+              {languages.map((lang) => (
+                <option key={lang.code} value={lang.code}>
+                  {lang.name} ({lang.nativeName})
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="mb-4">
