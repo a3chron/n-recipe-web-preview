@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { supabase } from "@/lib/supabase-client";
-import { Star, X } from "lucide-react";
+import { X, Star } from "lucide-react";
 
 interface RatingModalProps {
   isOpen: boolean;
   onClose: () => void;
   recipeId: string;
   recipeTitle: string;
+  onSuccess?: () => void;
 }
 
 export default function RatingModal({
@@ -16,37 +17,59 @@ export default function RatingModal({
   onClose,
   recipeId,
   recipeTitle,
+  onSuccess,
 }: RatingModalProps) {
   const [rating, setRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [hoveredRating, setHoveredRating] = useState(0);
+  const [comment, setComment] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmitRating = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
     if (rating === 0) {
-      setError("Please select a rating from 1 to 5 stars.");
+      setError("Please select a rating.");
+      setLoading(false);
       return;
     }
-    setLoading(true);
-    setError(null);
 
     try {
-      const { error: rpcError } = await supabase.rpc("submit_review", {
-        recipe_id_in: recipeId,
-        new_rating_in: rating,
-      });
+      const { error: insertError } = await supabase
+        .from("recipe_reviews")
+        .insert({
+          recipe_id: recipeId,
+          rating: rating,
+          comment: comment.trim() || null,
+        });
 
-      if (rpcError) throw rpcError;
+      if (insertError) throw insertError;
 
       // Success
       setLoading(false);
-      alert("Thank you for your review!");
+      setRating(0);
+      setComment("");
+
+      // Call success callback
+      if (onSuccess) {
+        onSuccess();
+      }
+
       onClose();
-      setRating(0); // Reset for next time
     } catch (e: any) {
-      setError(`Failed to submit review: ${e.message}`);
+      setError(`Failed to submit rating: ${e.message}`);
       setLoading(false);
     }
+  };
+
+  const handleClose = () => {
+    setRating(0);
+    setHoveredRating(0);
+    setComment("");
+    setError(null);
+    onClose();
   };
 
   if (!isOpen) return null;
@@ -54,56 +77,88 @@ export default function RatingModal({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ctp-overlay2 bg-opacity-70"
-      onClick={onClose}
+      onClick={handleClose}
     >
       <div
-        className="relative bg-ctp-mantle w-full max-w-md p-6 rounded-xl shadow-2xl border border-ctp-surface0"
+        className="relative bg-ctp-mantle w-full max-w-lg p-6 rounded-xl shadow-2xl border border-ctp-surface0"
         onClick={(e) => e.stopPropagation()}
       >
         <button
-          onClick={onClose}
+          onClick={handleClose}
           className="absolute top-4 right-4 text-ctp-subtext0 hover:text-ctp-text"
         >
           <X size={24} />
         </button>
 
-        <h2 className="text-2xl font-bold text-ctp-text mb-2">
-          Rate this recipe
-        </h2>
-        <p className="text-ctp-subtext0 mb-6">{recipeTitle}</p>
+        <h2 className="text-2xl font-bold text-ctp-text mb-2">Rate Recipe</h2>
+        <p className="text-ctp-subtext0 mb-6 text-sm">{recipeTitle}</p>
 
-        <div className="flex justify-center mb-6">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <button
-              key={star}
-              className="px-1"
-              onMouseEnter={() => setHoverRating(star)}
-              onMouseLeave={() => setHoverRating(0)}
-              onClick={() => setRating(star)}
+        <form onSubmit={handleSubmit}>
+          {/* Star Rating */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-ctp-subtext1 mb-3">
+              Your Rating
+            </label>
+            <div className="flex gap-2">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  type="button"
+                  onClick={() => setRating(star)}
+                  onMouseEnter={() => setHoveredRating(star)}
+                  onMouseLeave={() => setHoveredRating(0)}
+                  className="transition-transform hover:scale-110"
+                >
+                  <Star
+                    size={32}
+                    className={
+                      star <= (hoveredRating || rating)
+                        ? "fill-ctp-yellow text-ctp-yellow"
+                        : "text-ctp-surface1"
+                    }
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Optional Comment */}
+          <div className="mb-4">
+            <label
+              htmlFor="comment"
+              className="block text-sm font-medium text-ctp-subtext1 mb-1"
             >
-              <Star
-                size={36}
-                className={`transition-colors ${
-                  (hoverRating || rating) >= star
-                    ? "text-ctp-yellow fill-ctp-yellow"
-                    : "text-ctp-surface2"
-                }`}
-              />
+              Comment (Optional)
+            </label>
+            <textarea
+              id="comment"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              rows={4}
+              placeholder="Share your thoughts about this recipe..."
+              className="w-full bg-ctp-surface0 border border-ctp-surface1 rounded-lg p-3 text-ctp-text focus:ring-ctp-green focus:border-ctp-green"
+            />
+          </div>
+
+          {error && <p className="text-ctp-red mb-4 text-sm">{error}</p>}
+
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={handleClose}
+              className="flex-1 bg-ctp-surface0 text-ctp-text font-semibold px-4 py-3 rounded-lg hover:bg-ctp-surface1 transition-colors"
+            >
+              Cancel
             </button>
-          ))}
-        </div>
-
-        {error && (
-          <p className="text-ctp-red mb-4 text-sm text-center">{error}</p>
-        )}
-
-        <button
-          onClick={handleSubmitRating}
-          disabled={loading}
-          className="w-full bg-ctp-green text-ctp-base font-semibold px-4 py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {loading ? "Submitting..." : "Submit Review"}
-        </button>
+            <button
+              type="submit"
+              disabled={loading || rating === 0}
+              className="flex-1 bg-ctp-green text-ctp-base font-semibold px-4 py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? "Submitting..." : "Submit Rating"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

@@ -2,13 +2,71 @@
 
 import { getAllIngredients, getTotalCookingTime } from "@/lib/utils";
 import { RecipeFromDB } from "@/types/recipe";
-import { ArrowLeft, Clock, Download, Star, User, Users } from "lucide-react";
-import { useState } from "react";
+import {
+  ArrowLeft,
+  Clock,
+  Download,
+  Star,
+  User,
+  Users,
+  CheckCircle,
+} from "lucide-react";
+import { useState, useEffect } from "react";
 import RatingModal from "./rating-modal";
 
 interface RecipeDetailProps {
   recipe: RecipeFromDB;
   onBack: () => void;
+}
+
+// Helper functions for localStorage
+const DOWNLOADS_KEY = "recipe_downloads";
+const RATINGS_KEY = "recipe_ratings";
+
+function getDownloadedRecipes(): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const data = localStorage.getItem(DOWNLOADS_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch {
+    return [];
+  }
+}
+
+function getRatedRecipes(): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const data = localStorage.getItem(RATINGS_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch {
+    return [];
+  }
+}
+
+function markAsDownloaded(recipeId: string): void {
+  try {
+    const downloads = getDownloadedRecipes();
+    const id = recipeId.toString();
+    if (!downloads.includes(id)) {
+      downloads.push(id);
+      localStorage.setItem(DOWNLOADS_KEY, JSON.stringify(downloads));
+    }
+  } catch (e) {
+    console.error("Failed to save download status:", e);
+  }
+}
+
+function markAsRated(recipeId: string): void {
+  try {
+    const ratings = getRatedRecipes();
+    const id = recipeId.toString();
+    if (!ratings.includes(id)) {
+      ratings.push(id);
+      localStorage.setItem(RATINGS_KEY, JSON.stringify(ratings));
+    }
+  } catch (e) {
+    console.error("Failed to save rating status:", e);
+  }
 }
 
 export default function RecipeDetail({ recipe, onBack }: RecipeDetailProps) {
@@ -17,6 +75,18 @@ export default function RecipeDetail({ recipe, onBack }: RecipeDetailProps) {
   const totalTime = getTotalCookingTime(recipe_data);
 
   const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
+  const [hasDownloaded, setHasDownloaded] = useState(false);
+  const [hasRated, setHasRated] = useState(false);
+
+  // Check localStorage on mount
+  useEffect(() => {
+    const downloads = getDownloadedRecipes();
+    const ratings = getRatedRecipes();
+    const recipeIdStr = id.toString();
+
+    setHasDownloaded(downloads.includes(recipeIdStr));
+    setHasRated(ratings.includes(recipeIdStr));
+  }, [id]);
 
   const handleDownload = () => {
     // n-recipe expects an array
@@ -34,6 +104,53 @@ export default function RecipeDetail({ recipe, onBack }: RecipeDetailProps) {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+
+    // Mark as downloaded
+    markAsDownloaded(id);
+    setHasDownloaded(true);
+  };
+
+  const handleRateClick = () => {
+    if (!hasDownloaded) {
+      alert("Please download the recipe first before rating it!");
+      return;
+    }
+    if (hasRated) {
+      alert("You've already rated this recipe!");
+      return;
+    }
+    setIsRatingModalOpen(true);
+  };
+
+  const handleRatingSuccess = () => {
+    markAsRated(id);
+    setHasRated(true);
+  };
+
+  // Determine button state and text
+  const getRateButtonContent = () => {
+    if (hasRated) {
+      return (
+        <>
+          <CheckCircle size={18} />
+          Already Rated
+        </>
+      );
+    }
+    if (!hasDownloaded) {
+      return (
+        <>
+          <Star size={18} />
+          Download to Rate
+        </>
+      );
+    }
+    return (
+      <>
+        <Star size={18} />
+        Rate this recipe
+      </>
+    );
   };
 
   return (
@@ -64,11 +181,17 @@ export default function RecipeDetail({ recipe, onBack }: RecipeDetailProps) {
           </div>
           {/* Rate Button */}
           <button
-            onClick={() => setIsRatingModalOpen(true)}
-            className="flex-shrink-0 flex items-center justify-center gap-2 bg-ctp-green text-ctp-base font-semibold px-4 py-2 rounded-lg hover:opacity-90 transition-opacity"
+            onClick={handleRateClick}
+            disabled={hasRated}
+            className={`flex-shrink-0 flex items-center justify-center gap-2 font-semibold px-4 py-2 rounded-lg transition-opacity ${
+              hasRated
+                ? "bg-ctp-surface1 text-ctp-subtext0 cursor-not-allowed"
+                : hasDownloaded
+                  ? "bg-ctp-green text-ctp-base hover:opacity-90"
+                  : "bg-ctp-yellow text-ctp-base hover:opacity-90"
+            }`}
           >
-            <Star size={18} />
-            Rate this recipe
+            {getRateButtonContent()}
           </button>
         </div>
 
@@ -160,7 +283,7 @@ export default function RecipeDetail({ recipe, onBack }: RecipeDetailProps) {
         <div className="mt-8 pt-6 border-t border-ctp-surface1">
           <button
             onClick={handleDownload}
-            className="flex items-center justify-center gap-2 w-full bg-ctp-green text-ctp-base font-semibold px-4 py-3 rounded-lg hover:opacity-90 transition-opacity"
+            className="flex items-center justify-center gap-2 w-full font-semibold px-4 py-3 rounded-lg transition-opacity bg-ctp-green text-ctp-base hover:opacity-90"
           >
             <Download size={18} />
             Download .txt
@@ -174,6 +297,7 @@ export default function RecipeDetail({ recipe, onBack }: RecipeDetailProps) {
         onClose={() => setIsRatingModalOpen(false)}
         recipeId={id}
         recipeTitle={recipe_data.title}
+        onSuccess={handleRatingSuccess}
       />
     </>
   );

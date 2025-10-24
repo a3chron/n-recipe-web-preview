@@ -83,7 +83,7 @@ export default function HomePage() {
   return (
     <>
       <Header onSumbitClick={() => setIsModalOpen(true)} />
-      <main className="max-w-4xl mx-auto p-4 md:p-6">
+      <main className="max-w-5xl mx-auto p-4 md:p-6">
         {/*
           This ternary operator switches between the
           List View (with filters) and the Detail View
