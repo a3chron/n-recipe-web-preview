@@ -15,8 +15,7 @@ const PREMIUM_FEATURES = {
   immediate: [
     "Finish Translations for free & premium",
     "Tighten security for export/import (only allowed format (strip rest to ensure future compatibility), escaping if not automatically done) *free version too*",
-    "Improve light mode colors *free version too*",
-    "Sharing with app (imports not working)",
+    "Sharing with app",
     "Hide Timer by default, add toggle icon",
     "Export recipes as PDF",
     "Vote for features or bugs that should be added next (featurebase)",
@@ -33,7 +32,7 @@ const PREMIUM_FEATURES = {
     "Auto-select Catppuccin accent closest to system color",
     "Add counter for how many times a recipe was finished",
     "Maybe Share custom themes via qr",
-    "More translations (check if translations can be shared between premium & free)",
+    "Add more languages",
   ],
   future: [
     "Sync -> can be used on laptop / PC as well",
