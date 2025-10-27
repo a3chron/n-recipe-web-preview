@@ -1,4 +1,7 @@
+"use client";
+
 import { RecipeCategoryType } from "@/types/recipe";
+import { useEffect, useState } from "react";
 
 const categories: { value: RecipeCategoryType | "all"; label: string }[] = [
   { value: "all", label: "All" },
@@ -22,10 +25,22 @@ const sortOptions: { value: FilterState["sortBy"]; label: string }[] = [
   { value: "reviews", label: "Top Rated" },
 ];
 
+const languageDefaultOptions: {
+  value: FilterState["language"];
+  label: string;
+}[] = [
+  { value: "all", label: "All Languages" },
+  { value: "en", label: "English (English)" },
+  { value: "de", label: "German (Deutsch)" },
+  { value: "es", label: "Spanish (Español)" },
+  { value: "fr", label: "French (Français)" },
+];
+
 export interface FilterState {
   category: RecipeCategoryType | "all";
   cookingTime: "all" | "0-30" | "30-60" | "60+";
   sortBy: "newest" | "reviews";
+  language: string;
 }
 
 interface FilterProps {
@@ -42,8 +57,57 @@ export default function Filters({ filters, onFilterChange }: FilterProps) {
     onFilterChange({ ...filters, [key]: value });
   };
 
+  const [languages, setLanguages] = useState(languageDefaultOptions);
+
+  useEffect(() => {
+    // Load ISO 639-1 language data
+    const loadLanguages = async () => {
+      try {
+        const ISO6391 = (await import("iso-639-1")).default;
+        const codes = ISO6391.getAllCodes();
+        const langList = codes.map((code) => ({
+          value: code,
+          label: ISO6391.getName(code) + `(${ISO6391.getNativeName(code)})`,
+        }));
+        // Sort by English name
+        langList.sort((a, b) => a.label.localeCompare(b.label));
+        setLanguages([{ value: "all", label: "All Languages" }, ...langList]);
+      } catch (err) {
+        console.error("Failed to load languages:", err);
+      }
+    };
+    loadLanguages();
+  }, []);
+
   return (
     <div className="flex flex-col md:flex-row gap-4">
+      {/* Language Filter */}
+      <div className="flex-1">
+        <label
+          htmlFor="cookingTime"
+          className="block text-sm font-medium text-ctp-subtext1 mb-1"
+        >
+          Language
+        </label>
+        <select
+          id="language"
+          value={filters.language}
+          onChange={(e) =>
+            updateFilter(
+              "language",
+              e.target.value as FilterState[keyof FilterState],
+            )
+          }
+          className="w-full bg-ctp-surface0 border border-ctp-surface1 rounded-lg p-2 text-ctp-text focus:ring-ctp-green focus:border-ctp-green"
+        >
+          {languages.map((t) => (
+            <option key={t.value} value={t.value}>
+              {t.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {/* Category Filter */}
       <div className="flex-1">
         <label

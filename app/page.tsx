@@ -20,6 +20,7 @@ export default function HomePage() {
     category: "all",
     cookingTime: "all",
     sortBy: "newest",
+    language: "all",
   });
 
   // Fetch recipes when filters change
@@ -41,7 +42,12 @@ export default function HomePage() {
       query = query.eq("category", filters.category);
     }
 
-    // 2. Cooking Time Filter
+    // 2. Language Filter
+    if (filters.language !== "all") {
+      query = query.eq("language", filters.language);
+    }
+
+    // 3. Cooking Time Filter
     if (filters.cookingTime !== "all") {
       if (filters.cookingTime === "0-30") {
         query = query.lte("total_cooking_time", 30);
@@ -54,7 +60,7 @@ export default function HomePage() {
       }
     }
 
-    // 3. Sorting
+    // 4. Sorting
     if (filters.sortBy === "reviews") {
       query = query.order("average_review", { ascending: false });
     } else {
