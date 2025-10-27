@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 const PREMIUM_FEATURES = {
   existing: [
     "Import Helper Tool - Automatically convert recipes from websites, PDFs or images to the correct format to import them",
-    "Better Translations for premium (Both are Open Source, you can translate for your own language if it does not yet exist)",
     "Bigger limit for servings",
     "View what changed from your installed version to the latest one",
     "Several small to big UX / UI improvements",
@@ -23,21 +22,23 @@ const PREMIUM_FEATURES = {
     "Select which recipes and tags to import",
     "Maybe Show import progress (x of y imported)",
     "Option in settings to delete tags if not used in any recipe anymore (-> check on remove)",
-    "Add custom themes (+ option for sharing these easily, json)",
+    "Add custom themes (+ option for sharing these easily, json, maybe qr later on)",
     "Optional images for recipes (clean URLs on export)",
   ],
   midterm: [
     "Improve add recipe screen",
     "For first time recipes option instead of timer a stopwatch, to get time (or average times) for this step",
-    "Auto-select Catppuccin accent closest to system color",
+    "Auto-select Catppuccin accent closest to material you primary color",
     "Add counter for how many times a recipe was finished",
     "Maybe Share custom themes via qr",
     "Add more languages",
   ],
   future: [
-    "Sync -> can be used on laptop / PC as well",
     "Ingredients screen (e.g. show me recipes for what I have in my fridge)",
     "Meal planner screen",
+    "Sync -> can be used on laptop / PC as well",
+    "Accounts -> simpler sync, create shared meal planning calendars, family groups",
+    "Addition to ingredients screen: if you track what you have at home, when planning meals, or about to cook, shows which ingredients are missing",
     "If you have more features you would like to see, just ping me at 'kurt.schambach@gmail.com'",
   ],
 };
