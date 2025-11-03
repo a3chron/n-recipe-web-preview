@@ -13,10 +13,10 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import RatingModal from "./rating-modal";
+import Link from "next/link";
 
 interface RecipeDetailProps {
   recipe: RecipeFromDB;
-  onBack: () => void;
 }
 
 // Helper functions for localStorage
@@ -69,7 +69,7 @@ function markAsRated(recipeId: string): void {
   }
 }
 
-export default function RecipeDetail({ recipe, onBack }: RecipeDetailProps) {
+export default function RecipeDetail({ recipe }: RecipeDetailProps) {
   const { recipe_data, author, id, average_review, review_count } = recipe;
   const allIngredients = getAllIngredients(recipe_data);
   const totalTime = getTotalCookingTime(recipe_data);
@@ -157,13 +157,13 @@ export default function RecipeDetail({ recipe, onBack }: RecipeDetailProps) {
     <>
       <div className="bg-ctp-mantle rounded-xl border border-ctp-surface0 p-6 md:p-8">
         {/* Back Button */}
-        <button
-          onClick={onBack}
+        <Link
+          href="/"
           className="flex items-center gap-2 text-ctp-subtext1 hover:text-ctp-text mb-6 font-semibold"
         >
           <ArrowLeft size={18} />
           Back to List
-        </button>
+        </Link>
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-4">

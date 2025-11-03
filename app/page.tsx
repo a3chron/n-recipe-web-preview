@@ -5,16 +5,12 @@ import { supabase } from "@/lib/supabase-client";
 import { RecipeFromDB } from "@/types/recipe";
 import Filters, { FilterState } from "@/components/filters";
 import RecipeCard from "@/components/recipe-card";
-import RecipeDetail from "@/components/recipe-detail";
 import SubmitModal from "@/components/submit-modal";
 import Header from "@/components/header";
 
 export default function HomePage() {
   const [recipes, setRecipes] = useState<RecipeFromDB[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedRecipe, setSelectedRecipe] = useState<RecipeFromDB | null>(
-    null,
-  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filters, setFilters] = useState<FilterState>({
     category: "all",
@@ -30,10 +26,9 @@ export default function HomePage() {
 
   async function fetchRecipes() {
     setLoading(true);
-    setSelectedRecipe(null); // Go back to list when filters change
 
     let query = supabase
-      .from("recipes-web-preview")
+      .from("recipes-hub")
       .select("*")
       .eq("is_approved", true);
 
@@ -77,51 +72,31 @@ export default function HomePage() {
     setLoading(false);
   }
 
-  const handleRecipeSelect = (recipe: RecipeFromDB) => {
-    setSelectedRecipe(recipe);
-    window.scrollTo(0, 0);
-  };
-
-  const handleBack = () => {
-    setSelectedRecipe(null);
-  };
-
   return (
     <>
       <Header onSumbitClick={() => setIsModalOpen(true)} />
       <main className="max-w-5xl mx-auto p-4 md:p-6">
-        {/*
-          This ternary operator switches between the
-          List View (with filters) and the Detail View
-        */}
-        {selectedRecipe ? (
-          <RecipeDetail recipe={selectedRecipe} onBack={handleBack} />
-        ) : (
-          <>
-            <Filters filters={filters} onFilterChange={setFilters} />
+        <Filters filters={filters} onFilterChange={setFilters} />
 
-            {loading ? (
-              <p className="text-ctp-subtext0 text-center py-10">
-                Loading recipes...
-              </p>
+        {loading ? (
+          <p className="text-ctp-subtext0 text-center py-10">
+            Loading recipes...
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+            {recipes.length > 0 ? (
+              recipes.map((recipe) => (
+                <RecipeCard
+                  key={recipe.id}
+                  recipe={recipe}
+                />
+              ))
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-                {recipes.length > 0 ? (
-                  recipes.map((recipe) => (
-                    <RecipeCard
-                      key={recipe.id}
-                      recipe={recipe}
-                      onSelect={() => handleRecipeSelect(recipe)}
-                    />
-                  ))
-                ) : (
-                  <p className="text-ctp-subtext0 text-center col-span-full py-10">
-                    No recipes found matching your filters.
-                  </p>
-                )}
-              </div>
+              <p className="text-ctp-subtext0 text-center col-span-full py-10">
+                No recipes found matching your filters.
+              </p>
             )}
-          </>
+          </div>
         )}
       </main>
 

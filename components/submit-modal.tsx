@@ -118,7 +118,7 @@ export default function SubmitModal({
 
     try {
       const { error: insertError } = await supabase
-        .from("recipes-web-preview")
+        .from("recipes-hub")
         .insert(recipesToInsert);
 
       if (insertError) throw insertError;

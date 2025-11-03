@@ -14,8 +14,8 @@ const PREMIUM_FEATURES = {
   immediate: [
     "Finish Translations for free & premium",
     "Tighten security for export/import (only allowed format (strip rest to ensure future compatibility), escaping if not automatically done) *free version too*",
-    "Sharing with app",
-    "Hide Timer by default, add toggle icon",
+    "Sharing with app -> link to web-hub recipe, create temporary recipe in web app",
+    "Browse n-recipe hub recipes directly in the app",
     "Export recipes as PDF",
     "Vote for features or bugs that should be added next (featurebase)",
     "Add export filters",
