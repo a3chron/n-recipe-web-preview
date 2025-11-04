@@ -39,10 +39,12 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
           <Users size={16} />
           {recipe_data.servings || "N/A"} servings
         </span>
-        <span className="flex items-center gap-1.5">
-          <Star size={16} className="text-ctp-yellow" />
-          {average_review.toFixed(1)} ({review_count})
-        </span>
+        {average_review && (
+          <span className="flex items-center gap-1.5">
+            <Star size={16} className="text-ctp-yellow" />
+            {average_review.toFixed(1)} ({review_count})
+          </span>
+        )}
       </div>
     </Link>
   );
