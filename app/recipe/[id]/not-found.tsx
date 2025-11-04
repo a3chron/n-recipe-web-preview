@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function NotFound() {
   return (
     <div className="max-w-5xl mx-auto p-4 md:p-6 text-center">
@@ -5,11 +7,12 @@ export default function NotFound() {
         Recipe Not Found
       </h1>
       <p className="text-ctp-subtext0 mb-6">
-        The recipe you're looking for doesn't exist or hasn't been approved yet.
+        The recipe you&apos;re looking for doesn&apos;t exist or hasn&apos;t
+        been approved yet.
       </p>
-      <a href="/" className="text-ctp-blue hover:text-ctp-sapphire">
+      <Link href="/" className="text-ctp-blue hover:text-ctp-sapphire">
         ← Back to all recipes
-      </a>
+      </Link>
     </div>
   );
 }
