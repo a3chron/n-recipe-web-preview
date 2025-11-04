@@ -17,6 +17,7 @@ import Link from "next/link";
 
 interface RecipeDetailProps {
   recipe: RecipeFromDB;
+  shared?: boolean;
 }
 
 // Helper functions for localStorage
@@ -69,7 +70,7 @@ function markAsRated(recipeId: string): void {
   }
 }
 
-export default function RecipeDetail({ recipe }: RecipeDetailProps) {
+export default function RecipeDetail({ recipe, shared }: RecipeDetailProps) {
   const { recipe_data, author, id, average_review, review_count } = recipe;
   const allIngredients = getAllIngredients(recipe_data);
   const totalTime = getTotalCookingTime(recipe_data);
@@ -162,7 +163,7 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
           className="flex items-center gap-2 text-ctp-subtext1 hover:text-ctp-text mb-6 font-semibold"
         >
           <ArrowLeft size={18} />
-          Back to List
+          {shared ? "Home" : "Back to List"}
         </Link>
 
         {/* Header */}
@@ -172,27 +173,31 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
               {recipe_data.title}
             </h1>
             {/* Review count */}
-            <div className="flex items-center gap-1.5 text-ctp-subtext0 mt-2">
-              <Star size={16} className="text-ctp-yellow" />
-              <span>
-                {average_review.toFixed(1)} ({review_count} reviews)
-              </span>
-            </div>
+            {!shared && average_review && (
+              <div className="flex items-center gap-1.5 text-ctp-subtext0 mt-2">
+                <Star size={16} className="text-ctp-yellow" />
+                <span>
+                  {average_review.toFixed(1)} ({review_count} reviews)
+                </span>
+              </div>
+            )}
           </div>
           {/* Rate Button */}
-          <button
-            onClick={handleRateClick}
-            disabled={hasRated}
-            className={`flex-shrink-0 flex items-center justify-center gap-2 font-semibold px-4 py-2 rounded-lg transition-opacity ${
-              hasRated
-                ? "bg-ctp-surface1 text-ctp-subtext0 cursor-not-allowed"
-                : hasDownloaded
-                  ? "bg-ctp-green text-ctp-base hover:opacity-90"
-                  : "bg-ctp-yellow text-ctp-base hover:opacity-90"
-            }`}
-          >
-            {getRateButtonContent()}
-          </button>
+          {!shared && (
+            <button
+              onClick={handleRateClick}
+              disabled={hasRated}
+              className={`flex-shrink-0 flex items-center justify-center gap-2 font-semibold px-4 py-2 rounded-lg transition-opacity ${
+                hasRated
+                  ? "bg-ctp-surface1 text-ctp-subtext0 cursor-not-allowed"
+                  : hasDownloaded
+                    ? "bg-ctp-green text-ctp-base hover:opacity-90"
+                    : "bg-ctp-yellow text-ctp-base hover:opacity-90"
+              }`}
+            >
+              {getRateButtonContent()}
+            </button>
+          )}
         </div>
 
         {/* Meta Info */}
@@ -292,13 +297,15 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
       </div>
 
       {/* Render the modal */}
-      <RatingModal
-        isOpen={isRatingModalOpen}
-        onClose={() => setIsRatingModalOpen(false)}
-        recipeId={id}
-        recipeTitle={recipe_data.title}
-        onSuccess={handleRatingSuccess}
-      />
+      {!shared && (
+        <RatingModal
+          isOpen={isRatingModalOpen}
+          onClose={() => setIsRatingModalOpen(false)}
+          recipeId={id}
+          recipeTitle={recipe_data.title}
+          onSuccess={handleRatingSuccess}
+        />
+      )}
     </>
   );
 }

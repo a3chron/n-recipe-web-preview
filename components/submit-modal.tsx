@@ -12,6 +12,40 @@ interface SubmitModalProps {
   onSuccess: (count: number) => void;
 }
 
+const categories = [
+  "breakfast",
+  "lunch",
+  "dinner",
+  "snack",
+  "dessert",
+  "drink",
+];
+
+const validateRecipeData = (data: any): boolean => {
+  if (!Array.isArray(data)) return false;
+
+  return data.every((recipe) => {
+    return (
+      typeof recipe.title === "string" &&
+      typeof recipe.version === "string" &&
+      typeof recipe.servings === "number" &&
+      categories.includes(recipe.category) &&
+      Array.isArray(recipe.steps) &&
+      recipe.steps.every(
+        (step: any) =>
+          typeof step.name === "string" &&
+          typeof step.order === "number" &&
+          typeof step.description === "string" &&
+          typeof step.duration === "number" &&
+          Array.isArray(step.ingredients) &&
+          step.ingredients.every(
+            (ingredient: any) => typeof ingredient.name === "string",
+          ),
+      )
+    );
+  });
+};
+
 export default function SubmitModal({
   isOpen,
   onClose,
@@ -74,11 +108,12 @@ export default function SubmitModal({
     let recipeJson: Recipe[];
     try {
       recipeJson = JSON.parse(jsonText);
-      if (!Array.isArray(recipeJson)) {
-        throw new Error("Input is not a JSON array.");
-      }
-      if (recipeJson.length === 0) {
-        throw new Error("The JSON array is empty.");
+      if (!validateRecipeData(recipeJson)) {
+        throw new Error(
+          "Invalid recipe format. Please ensure all recipes have: title (string), " +
+            "version (string), servings (number), valid category, and properly " +
+            "formatted steps with ingredients.",
+        );
       }
     } catch (e: any) {
       setError(`Invalid JSON: ${e.message}. Please paste the export directly.`);
@@ -86,18 +121,10 @@ export default function SubmitModal({
       return;
     }
 
-    const recipesToInsert = [];
-    let invalidRecipeCount = 0;
-
-    for (const recipeObject of recipeJson) {
-      if (!recipeObject.title || !recipeObject.steps) {
-        invalidRecipeCount++;
-        continue;
-      }
-
+    const recipesToInsert = recipeJson.map((recipeObject) => {
       const total_cooking_time = getTotalCookingTime(recipeObject);
 
-      recipesToInsert.push({
+      return {
         recipe_data: recipeObject,
         title: recipeObject.title,
         category: recipeObject.category || "lunch",
@@ -105,8 +132,8 @@ export default function SubmitModal({
         language: language,
         total_cooking_time: total_cooking_time,
         is_approved: false,
-      });
-    }
+      };
+    });
 
     if (recipesToInsert.length === 0) {
       setError(
@@ -138,7 +165,7 @@ export default function SubmitModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ctp-overlay2 bg-opacity-70"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ctp-overlay2/20 backdrop-blur-2xl"
       onClick={onClose}
     >
       <div

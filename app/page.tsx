@@ -86,10 +86,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
             {recipes.length > 0 ? (
               recipes.map((recipe) => (
-                <RecipeCard
-                  key={recipe.id}
-                  recipe={recipe}
-                />
+                <RecipeCard key={recipe.id} recipe={recipe} />
               ))
             ) : (
               <p className="text-ctp-subtext0 text-center col-span-full py-10">

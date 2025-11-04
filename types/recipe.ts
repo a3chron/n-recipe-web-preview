@@ -26,11 +26,8 @@ export interface Recipe {
   category: RecipeCategoryType;
   steps: Step[];
   version: string;
-  // These fields are from your mobile app, optional but good to have
   tags?: string[];
-  img?: string;
-  createdAt?: string; // Stored as ISO string
-  isFavorite?: boolean;
+  createdAt?: string;
 }
 
 // This is the type we get from the Supabase DB
@@ -40,9 +37,9 @@ export interface RecipeFromDB {
   recipe_data: Recipe; // The full JSON blob
   title: string;
   category: RecipeCategoryType;
-  is_approved: boolean;
-  average_review: number;
-  review_count: number;
+  is_approved?: boolean;
+  average_review?: number;
+  review_count?: number;
   author: string | null;
   total_cooking_time: number | null;
 }
