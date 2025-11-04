@@ -10,7 +10,7 @@ const categories: { value: RecipeCategoryType | "all"; label: string }[] = [
   { value: "dinner", label: "Dinner" },
   { value: "snack", label: "Snack" },
   { value: "dessert", label: "Dessert" },
-  { value: "drinks", label: "Drinks" },
+  { value: "drink", label: "Drinks" },
 ];
 
 const cookingTimes: { value: FilterState["cookingTime"]; label: string }[] = [

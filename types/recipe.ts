@@ -4,7 +4,7 @@ export type RecipeCategoryType =
   | "dinner"
   | "snack"
   | "dessert"
-  | "drinks";
+  | "drink";
 
 export interface Ingredient {
   name: string;
