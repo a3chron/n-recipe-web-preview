@@ -12,6 +12,7 @@ const PREMIUM_FEATURES = {
     "Publish your recipes to the Hub directly in the app",
     "Search for recipes",
     "New category: drinks",
+    "Vibrant colors",
   ],
   immediate: [
     "Finish Translations for free & premium",
