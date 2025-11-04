@@ -12,19 +12,19 @@ importers:
         specifier: 5.2.5
         version: 5.2.5
       '@supabase/supabase-js':
-        specifier: ^2.76.1
+        specifier: 2.76.1
         version: 2.76.1
       '@tailwindcss/forms':
-        specifier: ^0.5.10
+        specifier: 0.5.10
         version: 0.5.10(tailwindcss@4.1.2)
       '@tailwindcss/postcss':
         specifier: 4.1.2
         version: 4.1.2
       iso-639-1:
-        specifier: ^3.1.5
+        specifier: 3.1.5
         version: 3.1.5
       lucide-react:
-        specifier: ^0.546.0
+        specifier: 0.546.0
         version: 0.546.0(react@19.1.0)
       next:
         specifier: 15.2.4
@@ -37,7 +37,7 @@ importers:
         version: 19.1.0(react@19.1.0)
     devDependencies:
       '@catppuccin/tailwindcss':
-        specifier: ^1.0.0
+        specifier: 1.0.0
         version: 1.0.0
       '@types/node':
         specifier: 22.14.0
