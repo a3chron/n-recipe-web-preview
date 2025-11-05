@@ -1,14 +1,12 @@
 import { RecipeFromDB } from "@/types/recipe";
 import { Clock, Star, Users } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 interface RecipeCardProps {
   recipe: RecipeFromDB;
 }
 
 export default function RecipeCard({ recipe }: RecipeCardProps) {
-  const router = useRouter();
   const {
     id,
     recipe_data,
@@ -21,7 +19,7 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
 
   return (
     <Link
-      href={`/recipe/${recipe.id}`}
+      href={`/recipe-hub/${id}`}
       className="bg-ctp-mantle border border-ctp-surface0 rounded-xl p-5 text-left transition-all hover:shadow-lg hover:-translate-y-1 hover:border-ctp-green"
     >
       <h3 className="text-xl font-bold text-ctp-green truncate">{title}</h3>
