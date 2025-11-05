@@ -12,7 +12,10 @@ export async function GET(request: NextRequest) {
     const sortBy = searchParams.get("sortBy") || "newest";
 
     // Start building the query
-    let query = supabase.from("recipe-hub").select("*").eq("is_approved", true);
+    let query = supabase
+      .from("recipes-hub")
+      .select("*")
+      .eq("is_approved", true);
 
     // 1. Category Filter
     if (category !== "all") {
