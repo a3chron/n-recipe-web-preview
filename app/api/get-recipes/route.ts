@@ -5,49 +5,13 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
 
-    // Get filter parameters
-    const category = searchParams.get("category") || "all";
-    const language = searchParams.get("language") || "all";
-    const cookingTime = searchParams.get("cookingTime") || "all";
-    const sortBy = searchParams.get("sortBy") || "newest";
-
-    // Start building the query
-    let query = supabase
-      .from("recipes-hub")
-      .select("*")
-      .eq("is_approved", true);
-
-    // 1. Category Filter
-    if (category !== "all") {
-      query = query.eq("category", category);
-    }
-
-    // 2. Language Filter
-    if (language !== "all") {
-      query = query.eq("language", language);
-    }
-
-    // 3. Cooking Time Filter
-    if (cookingTime !== "all") {
-      if (cookingTime === "0-30") {
-        query = query.lte("total_cooking_time", 30);
-      } else if (cookingTime === "30-60") {
-        query = query
-          .gte("total_cooking_time", 30)
-          .lt("total_cooking_time", 60);
-      } else if (cookingTime === "60+") {
-        query = query.gte("total_cooking_time", 60);
-      }
-    }
-
-    // 4. Sorting
-    if (sortBy === "reviews") {
-      query = query.order("average_review", { ascending: false });
-    } else {
-      query = query.order("created_at", { ascending: false });
-    }
-
-    const { data, error } = await query;
+    const { data, error } = await supabase.rpc("fuzzy_search_recipes", {
+      search_text: searchParams.get("query")?.trim() || "",
+      category_filter: searchParams.get("category") || "all",
+      language_filter: searchParams.get("language") || "all",
+      cooking_filter: searchParams.get("cookingTime") || "all",
+      sort_by: searchParams.get("sortBy") || "newest",
+    });
 
     if (error) {
       console.error("Error fetching recipes:", error);
