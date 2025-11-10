@@ -173,11 +173,15 @@ export default function RecipeDetail({ recipe, shared }: RecipeDetailProps) {
               {recipe_data.title}
             </h1>
             {/* Review count */}
-            {!shared && average_review && (
+            {!shared && average_review !== undefined && (
               <div className="flex items-center gap-1.5 text-ctp-subtext0 mt-2">
-                <Star size={16} className="text-ctp-yellow" />
+                {average_review !== 0 && (
+                  <Star size={16} className="text-ctp-yellow" />
+                )}
                 <span>
-                  {average_review.toFixed(1)} ({review_count} reviews)
+                  {average_review === 0
+                    ? `${review_count} reviews`
+                    : `${average_review.toFixed(1)} (${review_count} reviews)`}
                 </span>
               </div>
             )}

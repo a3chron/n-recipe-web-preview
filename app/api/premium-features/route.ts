@@ -22,10 +22,13 @@ const PREMIUM_FEATURES = {
     "Export recipes as PDF",
     "Show in tag settings which tags have 0 recipes",
     "Optional images for recipes (clean URLs on export)",
+    "Accounts",
+    "Font selection",
     "Vote for features or bugs that should be added next (featurebase) -> after all immediate todos are done, will then mostly replace this api endpoint",
   ],
   midterm: [
     "Improve add recipe screen",
+    "Fat, calories & other info for recipes",
     "Select which recipes and tags to import",
     "Add custom themes (+ option for sharing these easily, json, maybe qr later on)",
     "For first time recipes option instead of timer a stopwatch, to get time (or average times) for this step",
