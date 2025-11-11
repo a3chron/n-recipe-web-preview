@@ -2,18 +2,16 @@ import { NextResponse } from "next/server";
 
 const PREMIUM_FEATURES = {
   existing: [
+    "Images for recipes",
+    "Browse n-recipe hub recipes directly in the app",
+    "New category: drinks",
+    "Vibrant colors",
     "Import Helper Tool - Automatically convert recipes from websites, PDFs or images to the correct format to import them",
-    "Bigger limit for servings",
     "View what changed from your installed version to the latest one",
     "Several small to big UX / UI improvements",
     "Haptic feedback for several components",
+    "Bigger limit for servings",
     "More than three tags, more filter options for tags (filter against tags, filter for several tags)",
-    "Sharing recipes with people with and without app",
-    "Publish your recipes to the Hub directly in the app",
-    "Browse n-recipe hub recipes directly in the app",
-    "Vibrant color toggle for themes",
-    "New category: drinks",
-    "Vibrant colors",
   ],
   immediate: [
     "Finish Translations for free & premium",
@@ -21,7 +19,6 @@ const PREMIUM_FEATURES = {
     "See the status of your published recipes (waiting for approval, approved, rejected)",
     "Export recipes as PDF",
     "Show in tag settings which tags have 0 recipes",
-    "Optional images for recipes (clean URLs on export)",
     "Accounts",
     "Font selection",
     "Vote for features or bugs that should be added next (featurebase) -> after all immediate todos are done, will then mostly replace this api endpoint",
