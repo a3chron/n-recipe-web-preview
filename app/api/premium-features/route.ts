@@ -2,11 +2,12 @@ import { NextResponse } from "next/server";
 
 const PREMIUM_FEATURES = {
   existing: [
-    "Images for recipes",
-    "Browse n-recipe hub recipes directly in the app",
+    "Images for recipes -> will come to free too",
+    "Ingredients screen (e.g. show me recipes for what I have in my fridge)",
+    "Browse n-recipe hub recipes directly in the app -> will come to free too",
     "New category: drinks",
     "Vibrant colors",
-    "Import Helper Tool - Automatically convert recipes from websites, PDFs or images to the correct format to import them",
+    "Import Helper Tool - Automatically convert recipes from websites, PDFs or images to the correct format to import them -> will come to free too",
     "View what changed from your installed version to the latest one",
     "Several small to big UX / UI improvements",
     "Haptic feedback for several components",
@@ -35,7 +36,6 @@ const PREMIUM_FEATURES = {
     "Add more languages",
   ],
   future: [
-    "Ingredients screen (e.g. show me recipes for what I have in my fridge)",
     "Meal planner screen",
     "Sync -> can be used on laptop / PC as well",
     "Accounts -> simpler sync, create shared meal planning calendars, family groups",
