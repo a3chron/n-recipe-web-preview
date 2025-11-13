@@ -17,6 +17,9 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
     review_count,
   } = recipe;
 
+  const totalCookingTime =
+    total_cooking_time ?? recipe_data.steps.reduce((a, b) => a + b.duration, 0);
+
   return (
     <Link
       href={`/recipe-hub/${id}`}
@@ -26,13 +29,13 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
       <p className="text-ctp-subtext0 capitalize mt-1 mb-3">{category}</p>
 
       <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-ctp-subtext1">
-        <span className="flex items-center gap-1.5">
-          <Clock size={16} />
-          {total_cooking_time ||
-            recipe_data.steps.reduce((a, b) => a + b.duration, 0) ||
-            "N/A"}{" "}
-          min
-        </span>
+        {totalCookingTime !== 0 && (
+          <span className="flex items-center gap-1.5">
+            <Clock size={16} />
+            {totalCookingTime}
+            min
+          </span>
+        )}
         <span className="flex items-center gap-1.5">
           <Users size={16} />
           {recipe_data.servings || "N/A"} servings
