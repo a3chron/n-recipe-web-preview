@@ -45,9 +45,12 @@ const PREMIUM_FEATURES = {
 };
 
 export async function GET() {
-  return NextResponse.json(PREMIUM_FEATURES, {
-    headers: {
-      "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+  return NextResponse.json(
+    { ...PREMIUM_FEATURES, released: false },
+    {
+      headers: {
+        "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+      },
     },
-  });
+  );
 }
