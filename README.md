@@ -1,3 +1,5 @@
+# n-recipe web hub
+
 This is a simple [Next.js](https://nextjs.org/) Template.
 
 ## Getting Started
@@ -34,3 +36,10 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+# Media
+
+**Friends & Family**: https://play.google.com/store/apps/details?id=com.a3chron.nrecipe&utm_source=distribution
+**Nothing Community**: https://play.google.com/store/apps/details?id=com.a3chron.nrecipe&utm_source=nothingCommunity&utm_campaign=launch
+**Reddit**: https://play.google.com/store/apps/details?id=com.a3chron.nrecipe&utm_source=reddit&utm_campaign=launch
+**Portfolio**: https://play.google.com/store/apps/details?id=com.a3chron.nrecipe&utm_source=portfolio
