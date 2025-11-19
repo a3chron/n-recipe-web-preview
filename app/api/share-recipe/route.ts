@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
 
     // Insert into shared-recipes table
     const { data, error } = await supabase
-      .from("shared-recipes")
+      .from("recipe-shared")
       .insert([recipeToInsert])
       .select("id")
       .single();

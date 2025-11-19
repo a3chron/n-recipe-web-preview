@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     }
 
     const { data, error } = await supabase
-      .from("shared-recipes")
+      .from("recipe-shared")
       .select("*")
       .eq("id", id)
       .single();

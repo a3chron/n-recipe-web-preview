@@ -9,7 +9,7 @@ interface PageProps {
 
 async function getSharedRecipe(id: string): Promise<RecipeFromDB | null> {
   const { data, error } = await supabase
-    .from("shared-recipes")
+    .from("recipe-shared")
     .select("*")
     .eq("id", id)
     .single();
