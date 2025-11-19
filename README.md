@@ -39,7 +39,8 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 # Media
 
-**Friends & Family**: https://play.google.com/store/apps/details?id=com.a3chron.nrecipe&utm_source=distribution
-**Nothing Community**: https://play.google.com/store/apps/details?id=com.a3chron.nrecipe&utm_source=nothingCommunity&utm_campaign=launch
-**Reddit**: https://play.google.com/store/apps/details?id=com.a3chron.nrecipe&utm_source=reddit&utm_campaign=launch
-**Portfolio**: https://play.google.com/store/apps/details?id=com.a3chron.nrecipe&utm_source=portfolio
+- **Friends & Family**: https://play.google.com/store/apps/details?id=com.a3chron.nrecipe&utm_source=distribution
+- **Nothing Community**: https://play.google.com/store/apps/details?id=com.a3chron.nrecipe&utm_source=nothingCommunity&utm_campaign=launch
+- **LinkedIn**: https://play.google.com/store/apps/details?id=com.a3chron.nrecipe&utm_source=linkedin&utm_campaign=launch
+- **Reddit**: https://play.google.com/store/apps/details?id=com.a3chron.nrecipe&utm_source=reddit&utm_campaign=launch
+- **Portfolio**: https://play.google.com/store/apps/details?id=com.a3chron.nrecipe&utm_source=portfolio
