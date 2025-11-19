@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
-    const id = request.nextUrl.searchParams.get("id");
+    const body = await request.json();
+    const id = body.id;
 
     if (!id) {
       return NextResponse.json(
