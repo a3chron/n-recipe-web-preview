@@ -2,11 +2,11 @@ import { NextResponse } from "next/server";
 
 const PREMIUM_FEATURES = {
   existing: [
-    "Images for recipes -> will come to free too",
     "Ingredients screen (e.g. show me recipes for what I have in my fridge)",
-    "Browse n-recipe hub recipes directly in the app -> will come to free too",
+    "Browse n-recipe hub recipes directly in the app",
     "New category: drinks",
     "Vibrant colors",
+    "Font selection",
     "Import Helper Tool - Automatically convert recipes from websites, PDFs or images to the correct format to import them -> will come to free too",
     "View what changed from your installed version to the latest one",
     "Several small to big UX / UI improvements",
@@ -21,8 +21,7 @@ const PREMIUM_FEATURES = {
     "Export recipes as PDF",
     "Show in tag settings which tags have 0 recipes",
     "Accounts",
-    "Font selection",
-    "Vote for features or bugs that should be added next (featurebase) -> after all immediate todos are done, will then mostly replace this api endpoint",
+    "Improved ingredient handling",
   ],
   midterm: [
     "Improve add recipe screen",
@@ -31,12 +30,12 @@ const PREMIUM_FEATURES = {
     "Add custom themes (+ option for sharing these easily, json, maybe qr later on)",
     "For first time recipes option instead of timer a stopwatch, to get time (or average times) for this step",
     "Auto-select Catppuccin accent closest to material you primary color",
-    "Add counter for how many times a recipe was finished",
-    "Maybe Share custom themes via qr",
+    "Add counter for how many times a recipe was finished, most liked chef form online hub etc",
     "Add more languages",
   ],
   future: [
     "Meal planner screen",
+    "Improved import helper tool, right in the app",
     "Sync -> can be used on laptop / PC as well",
     "Accounts -> simpler sync, create shared meal planning calendars, family groups",
     "Addition to ingredients screen: if you track what you have at home, when planning meals, or about to cook, shows which ingredients are missing",
