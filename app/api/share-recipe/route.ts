@@ -59,9 +59,9 @@ export async function POST(request: NextRequest) {
       total_cooking_time: getTotalCookingTime(recipe),
     };
 
-    // Insert into shared-recipes table
+    // Insert into recipes-shared table
     const { data, error } = await supabase
-      .from("recipe-shared")
+      .from("recipes-shared")
       .insert([recipeToInsert])
       .select("id")
       .single();

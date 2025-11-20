@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
       is_approved: true, // keep this here in case we want to set it to false for some time (DDOS / spamming etc)
     };
 
-    // Insert into shared-recipes table
+    // Insert into recipes-hub table
     const { data, error } = await supabase
       .from("recipes-hub")
       .insert([recipeToInsert])
