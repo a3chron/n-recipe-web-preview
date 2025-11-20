@@ -57,7 +57,9 @@ export default function HomePage() {
 
     // 4. Sorting
     if (filters.sortBy === "reviews") {
-      query = query.order("average_review", { ascending: false });
+      query = query
+        .order("average_review", { ascending: false })
+        .order("review_count", { ascending: false });
     } else {
       query = query.order("created_at", { ascending: false });
     }
