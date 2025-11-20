@@ -7,9 +7,9 @@ export default function NotFound() {
         Shared Recipe Not Found
       </h1>
       <p className="text-ctp-subtext0 mb-6">
-        This recipe may have expired (30 day limit) or never existed.
+        This recipe may have expired (30 day after shared) or never existed.
       </p>
-      <Link href="/" className="text-ctp-blue hover:text-ctp-sapphire">
+      <Link href="/app/hub" className="text-ctp-blue hover:text-ctp-sapphire">
         ← Browse all recipes
       </Link>
     </div>

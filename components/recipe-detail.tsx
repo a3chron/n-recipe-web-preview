@@ -159,11 +159,11 @@ export default function RecipeDetail({ recipe, shared }: RecipeDetailProps) {
       <div className="bg-ctp-mantle rounded-xl border border-ctp-surface0 p-6 md:p-8">
         {/* Back Button */}
         <Link
-          href="/"
+          href={shared ? "/app" : "/app/hub"}
           className="flex items-center gap-2 text-ctp-subtext1 hover:text-ctp-text mb-6 font-semibold"
         >
           <ArrowLeft size={18} />
-          {shared ? "Home" : "Back to List"}
+          {shared ? "Home" : "Back to Hub"}
         </Link>
 
         {/* Header */}

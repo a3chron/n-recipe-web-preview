@@ -22,7 +22,7 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
 
   return (
     <Link
-      href={`/recipe-hub/${id}`}
+      href={`/app/recipe-hub/${id}`}
       className="bg-ctp-mantle border border-ctp-surface0 rounded-xl p-5 text-left transition-all hover:shadow-lg hover:-translate-y-1 hover:border-ctp-green"
     >
       <h3 className="text-xl font-bold text-ctp-green truncate">{title}</h3>

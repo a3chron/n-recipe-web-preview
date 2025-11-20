@@ -7,10 +7,9 @@ export default function NotFound() {
         Recipe Not Found
       </h1>
       <p className="text-ctp-subtext0 mb-6">
-        The recipe you&apos;re looking for doesn&apos;t exist or hasn&apos;t
-        been approved yet.
+        The recipe you&apos;re looking for doesn&apos;t exist.
       </p>
-      <Link href="/" className="text-ctp-blue hover:text-ctp-sapphire">
+      <Link href="/app/hub" className="text-ctp-blue hover:text-ctp-sapphire">
         ← Back to all recipes
       </Link>
     </div>
