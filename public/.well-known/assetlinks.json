@@ -18,5 +18,15 @@
         "A3:47:85:05:F6:6A:0C:EB:6D:00:0B:7A:49:77:CA:EF:D8:EC:6F:2B:D6:55:C5:5A:CB:FC:B7:30:18:91:B9:6B"
       ]
     }
+  },
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.a3chron.nrecipe",
+      "sha256_cert_fingerprints": [
+        "97:C3:51:6E:C6:5A:77:CD:EA:B4:17:D5:A6:94:C5:73:FC:18:F8:B0:33:4D:AF:5F:FE:A0:35:0C:D1:C6:24:16"
+      ]
+    }
   }
 ]
