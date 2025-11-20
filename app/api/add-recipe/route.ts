@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       author: author.trim(),
       language: language,
       total_cooking_time: getTotalCookingTime(recipe),
-      is_approved: false,
+      is_approved: true, // keep this here in case we want to set it to false for some time (DDOS / spamming etc)
     };
 
     // Insert into shared-recipes table
