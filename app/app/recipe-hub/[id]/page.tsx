@@ -1,25 +1,9 @@
 import { notFound } from "next/navigation";
-import { supabase } from "@/lib/supabase-client";
-import { RecipeFromDB } from "@/types/recipe";
 import RecipeDetail from "@/components/recipe-detail";
+import { getRecipe } from "../../actions";
 
 interface PageProps {
   params: Promise<{ id: string }>;
-}
-
-async function getRecipe(id: string): Promise<RecipeFromDB | null> {
-  const { data, error } = await supabase
-    .from("recipes-hub")
-    .select("*")
-    .eq("id", id)
-    .eq("is_approved", true)
-    .single();
-
-  if (error || !data) {
-    return null;
-  }
-
-  return data;
 }
 
 export default async function RecipePage({ params }: PageProps) {
@@ -49,6 +33,6 @@ export async function generateMetadata({ params }: PageProps) {
 
   return {
     title: `${recipe.title} - n-recipe`,
-    description: `View the recipe for ${recipe.title}`,
+    description: `View the recipe for "${recipe.title}" by "${recipe.author}"`,
   };
 }

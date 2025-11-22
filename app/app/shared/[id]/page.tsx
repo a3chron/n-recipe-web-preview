@@ -1,24 +1,9 @@
 import { notFound } from "next/navigation";
-import { supabase } from "@/lib/supabase-client";
-import { RecipeFromDB } from "@/types/recipe";
 import RecipeDetail from "@/components/recipe-detail";
+import { getSharedRecipe } from "../../actions";
 
 interface PageProps {
   params: Promise<{ id: string }>;
-}
-
-async function getSharedRecipe(id: string): Promise<RecipeFromDB | null> {
-  const { data, error } = await supabase
-    .from("recipes-shared")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  if (error || !data) {
-    return null;
-  }
-
-  return data;
 }
 
 export default async function SharedRecipePage({ params }: PageProps) {

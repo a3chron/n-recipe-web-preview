@@ -10,10 +10,12 @@ import {
   User,
   Users,
   CheckCircle,
+  Flag,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import RatingModal from "./rating-modal";
 import Link from "next/link";
+import FlagModal from "./flag-modal";
 
 interface RecipeDetailProps {
   recipe: RecipeFromDB;
@@ -23,6 +25,7 @@ interface RecipeDetailProps {
 // Helper functions for localStorage
 const DOWNLOADS_KEY = "recipe_downloads";
 const RATINGS_KEY = "recipe_ratings";
+const FLAG_KEY = "recipe_flags";
 
 function getDownloadedRecipes(): string[] {
   if (typeof window === "undefined") return [];
@@ -38,6 +41,16 @@ function getRatedRecipes(): string[] {
   if (typeof window === "undefined") return [];
   try {
     const data = localStorage.getItem(RATINGS_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch {
+    return [];
+  }
+}
+
+function getFlaggedRecipes(): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const data = localStorage.getItem(DOWNLOADS_KEY);
     return data ? JSON.parse(data) : [];
   } catch {
     return [];
@@ -70,6 +83,19 @@ function markAsRated(recipeId: string): void {
   }
 }
 
+function markAsFlagged(recipeId: string): void {
+  try {
+    const flags = getFlaggedRecipes();
+    const id = recipeId.toString();
+    if (!flags.includes(id)) {
+      flags.push(id);
+      localStorage.setItem(FLAG_KEY, JSON.stringify(flags));
+    }
+  } catch (e) {
+    console.error("Failed to save flagged status:", e);
+  }
+}
+
 export default function RecipeDetail({ recipe, shared }: RecipeDetailProps) {
   const { recipe_data, author, id, average_review, review_count } = recipe;
   const allIngredients = getAllIngredients(recipe_data);
@@ -78,6 +104,8 @@ export default function RecipeDetail({ recipe, shared }: RecipeDetailProps) {
   const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
   const [hasDownloaded, setHasDownloaded] = useState(false);
   const [hasRated, setHasRated] = useState(false);
+  const [flagModalOpen, setFlagModalOpen] = useState(false);
+  const [hasFlagged, setHasFlagged] = useState(false);
 
   // Check localStorage on mount
   useEffect(() => {
@@ -109,6 +137,27 @@ export default function RecipeDetail({ recipe, shared }: RecipeDetailProps) {
     // Mark as downloaded
     markAsDownloaded(id);
     setHasDownloaded(true);
+  };
+
+  const handleFlag = () => {
+    fetch("/api/flag-recipe", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: recipe.id,
+      }),
+    }).then((resp) => {
+      // TODO: do this only for logged in users (but maybe show a alert / modal to users that they have to log in), and dont save in localstorage then
+      setFlagModalOpen(false);
+      if (!resp.ok) {
+        alert("Failed to flag recipe, try again later");
+      } else {
+        markAsFlagged(recipe.id);
+        alert("Flagged recipe, we will review it as soon as possible");
+      }
+    });
   };
 
   const handleRateClick = () => {
@@ -188,19 +237,30 @@ export default function RecipeDetail({ recipe, shared }: RecipeDetailProps) {
           </div>
           {/* Rate Button */}
           {!shared && (
-            <button
-              onClick={handleRateClick}
-              disabled={hasRated}
-              className={`flex-shrink-0 flex items-center justify-center gap-2 font-semibold px-4 py-2 rounded-lg transition-opacity ${
-                hasRated
-                  ? "bg-ctp-surface1 text-ctp-subtext0 cursor-not-allowed"
-                  : hasDownloaded
-                    ? "bg-ctp-green text-ctp-base hover:opacity-90"
-                    : "bg-ctp-yellow text-ctp-base hover:opacity-90"
-              }`}
-            >
-              {getRateButtonContent()}
-            </button>
+            <div className="flex flex-row gap-2">
+              {!hasFlagged && (
+                <button
+                  onClick={() => setFlagModalOpen(true)}
+                  disabled={hasFlagged}
+                  className="flex-shrink-0 flex items-center justify-center gap-2 font-semibold px-4 py-2 rounded-lg transition-opacity bg-ctp-overlay1 hover:bg-ctp-red text-ctp-base hover:opacity-90"
+                >
+                  <Flag />
+                </button>
+              )}
+              <button
+                onClick={handleRateClick}
+                disabled={hasRated}
+                className={`flex-shrink-0 flex items-center justify-center gap-2 font-semibold px-4 py-2 rounded-lg transition-opacity ${
+                  hasRated
+                    ? "bg-ctp-surface1 text-ctp-subtext0 cursor-not-allowed"
+                    : hasDownloaded
+                      ? "bg-ctp-green text-ctp-base hover:opacity-90"
+                      : "bg-ctp-yellow text-ctp-base hover:opacity-90"
+                }`}
+              >
+                {getRateButtonContent()}
+              </button>
+            </div>
           )}
         </div>
 
@@ -300,7 +360,6 @@ export default function RecipeDetail({ recipe, shared }: RecipeDetailProps) {
         </div>
       </div>
 
-      {/* Render the modal */}
       {!shared && (
         <RatingModal
           isOpen={isRatingModalOpen}
@@ -308,6 +367,15 @@ export default function RecipeDetail({ recipe, shared }: RecipeDetailProps) {
           recipeId={id}
           recipeTitle={recipe_data.title}
           onSuccess={handleRatingSuccess}
+        />
+      )}
+
+      {!shared && (
+        <FlagModal
+          isOpen={flagModalOpen}
+          onClose={() => setFlagModalOpen(false)}
+          onSubmit={() => handleFlag()}
+          recipeTitle={recipe.title}
         />
       )}
     </>

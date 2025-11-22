@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase-client";
 import { RecipeFromDB } from "@/types/recipe";
 import Filters, { FilterState } from "@/components/filters";
 import RecipeCard from "@/components/recipe-card";
 import SubmitModal from "@/components/submit-modal";
 import Header from "@/components/header";
+import { fetchRecipes } from "../actions";
 
 export default function HomePage() {
   const [recipes, setRecipes] = useState<RecipeFromDB[]>([]);
@@ -21,58 +21,12 @@ export default function HomePage() {
 
   // Fetch recipes when filters change
   useEffect(() => {
-    fetchRecipes();
-  }, [filters]);
-
-  async function fetchRecipes() {
     setLoading(true);
-
-    let query = supabase
-      .from("recipes-hub")
-      .select("*")
-      .eq("is_approved", true);
-
-    // 1. Category Filter
-    if (filters.category !== "all") {
-      query = query.eq("category", filters.category);
-    }
-
-    // 2. Language Filter
-    if (filters.language !== "all") {
-      query = query.eq("language", filters.language);
-    }
-
-    // 3. Cooking Time Filter
-    if (filters.cookingTime !== "all") {
-      if (filters.cookingTime === "0-30") {
-        query = query.lte("total_cooking_time", 30);
-      } else if (filters.cookingTime === "30-60") {
-        query = query
-          .gte("total_cooking_time", 30)
-          .lt("total_cooking_time", 60);
-      } else if (filters.cookingTime === "60+") {
-        query = query.gte("total_cooking_time", 60);
-      }
-    }
-
-    // 4. Sorting
-    if (filters.sortBy === "reviews") {
-      query = query
-        .order("average_review", { ascending: false })
-        .order("review_count", { ascending: false });
-    } else {
-      query = query.order("created_at", { ascending: false });
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      console.error("Error fetching recipes:", error);
-    } else {
-      setRecipes(data || []);
-    }
-    setLoading(false);
-  }
+    fetchRecipes(filters).then((data) => {
+      setRecipes(data);
+      setLoading(false);
+    });
+  }, [filters]);
 
   return (
     <>
