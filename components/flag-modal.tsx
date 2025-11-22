@@ -35,7 +35,7 @@ export default function FlagModal({
         <p className="text-ctp-subtext0 mb-6 text-sm">{recipeTitle}</p>
 
         <div>
-          <p>Are you sure you want to flag "{recipeTitle}"?</p>
+          <p>Are you sure you want to flag &quot;{recipeTitle}&quot;?</p>
           <div className="flex gap-3 mt-3">
             <button
               onClick={onClose}
